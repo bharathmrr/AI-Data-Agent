@@ -2,11 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { VegaLite } from 'react-vega'
 import { api } from '../lib/api'
 
-interface Message { 
-	role: 'user' | 'assistant'
-	content: string
-	timestamp: string
-}
+interface Message { role: 'user' | 'assistant', content: string }
 
 export default function ChatBox({ datasetId }: { datasetId: string }) {
 	const [messages, setMessages] = useState<Message[]>([])
@@ -18,32 +14,19 @@ export default function ChatBox({ datasetId }: { datasetId: string }) {
 
 	useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
-	const getCurrentTime = () => {
-		return new Date().toLocaleTimeString('en-US', { 
-			hour: '2-digit', 
-			minute: '2-digit',
-			hour12: true 
-		})
-	}
-
 	const send = async () => {
 		if (!input.trim()) return
-		const userMessage = { role: 'user' as const, content: input, timestamp: getCurrentTime() }
-		const next = [...messages, userMessage]
+		const next = [...messages, { role: 'user', content: input }]
 		setMessages(next)
 		setInput('')
 		setLoading(true)
 		try {
-			// Convert messages to API format (without timestamps)
-			const apiMessages = next.map(m => ({ role: m.role, content: m.content }))
-			const res = await api.post<{ answer: string; table?: any[]; chart?: any }>(`/chat`, { dataset_id: datasetId, messages: apiMessages })
-			if (res?.answer) {
-				setMessages(m => [...m, { role: 'assistant', content: res.answer, timestamp: getCurrentTime() }])
-			}
+			const res = await api.post<{ answer: string; table?: any[]; chart?: any }>(`/chat`, { dataset_id: datasetId, messages: next })
+			if (res?.answer) setMessages(m => [...m, { role: 'assistant', content: res.answer }])
 			setTable(res?.table || null)
 			setChart(res?.chart || null)
 		} catch (e: any) {
-			setMessages(m => [...m, { role: 'assistant', content: e?.response?.data?.detail || 'Failed to get answer', timestamp: getCurrentTime() }])
+			setMessages(m => [...m, { role: 'assistant', content: e?.response?.data?.detail || 'Failed to get answer' }])
 		} finally {
 			setLoading(false)
 		}
@@ -117,22 +100,6 @@ export default function ChatBox({ datasetId }: { datasetId: string }) {
 								? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg' 
 								: 'bg-white/10 border border-white/20 backdrop-blur-sm'
 						}`}>
-							{/* Message Header with timestamp */}
-							<div className={`flex items-center justify-between mb-2 text-xs opacity-70 ${
-								m.role === 'user' ? 'text-indigo-100' : 'text-gray-300'
-							}`}>
-								<div className="flex items-center space-x-2">
-									<span className="text-lg">
-										{m.role === 'user' ? '👤' : '🤖'}
-									</span>
-									<span className="font-medium">
-										{m.role === 'user' ? 'You' : 'AI Assistant'}
-									</span>
-								</div>
-								<span className="text-xs opacity-60">{m.timestamp}</span>
-							</div>
-							
-							{/* Message Content */}
 							{m.role === 'assistant' ? (
 								<div className="prose prose-invert max-w-none">
 									{m.content.split('**').map((part, idx) => 
@@ -140,7 +107,10 @@ export default function ChatBox({ datasetId }: { datasetId: string }) {
 									)}
 								</div>
 							) : (
-								<span>{m.content}</span>
+								<div className="flex items-center space-x-2">
+									<span className="text-lg">👤</span>
+									<span>{m.content}</span>
+								</div>
 							)}
 						</div>
 					</div>
