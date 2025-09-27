@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	color-scheme: light dark;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+	color: #e7ecf2;
+	overflow-x: hidden;
+}
+
+.card {
+	background: rgba(255,255,255,0.08);
+	border: 1px solid rgba(255,255,255,0.15);
+	border-radius: 20px;
+	backdrop-filter: blur(20px);
+	box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+	transition: all 0.3s ease;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.animate-float {
+	animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+	animation: float 6s ease-in-out infinite 2s;
+}
+
+@keyframes float {
+	0%, 100% { transform: translateY(0px); }
+	50% { transform: translateY(-20px); }
+}
+
+.animate-pulse-slow {
+	animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.star {
+	position: absolute;
+	background: white;
+	border-radius: 50%;
+	animation: twinkle 3s ease-in-out infinite;
+}
+
+.star:nth-child(2n) {
+	animation-delay: 1s;
+}
+
+.star:nth-child(3n) {
+	animation-delay: 2s;
+}
+
+@keyframes twinkle {
+	0%, 100% { opacity: 0.3; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.2); }
+}
+
+.gradient-text {
+	background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.glow {
+	box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+}
+
+.glow:hover {
+	box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+}
+
+.chart-container {
+	background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+	border: 2px solid rgba(102, 126, 234, 0.5);
+	box-shadow: 
+		0 0 30px rgba(102, 126, 234, 0.3),
+		inset 0 0 30px rgba(255, 255, 255, 0.1);
+	min-height: 500px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+@keyframes twinkle-slow {
+	0%, 100% { opacity: 0.3; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.5); }
+}
+
+.twinkle-slow {
+	animation: twinkle-slow 4s ease-in-out infinite;
+}
